@@ -6,7 +6,7 @@ import (
 	// "fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
+//	"os"
 	"time"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
@@ -78,14 +78,15 @@ func MakeProxy() http.HandlerFunc {
 		var payload Payload
 		var func_call FuncCall
 		json.Unmarshal([]byte(body), &func_call)
-
+		payload.Fid = name
 		payload.Src = v.Image
 		payload.Params = func_call.Params
 		payload.Worker = func_call.Worker
 		payload.Lang = func_call.Lang
-		packet, marshal_err := json.Marshal(payload)
+		_, marshal_err := json.Marshal(payload)
+		
 		client := http.Client{
-			Timeout: 5 * time.Second,
+			Timeout: 10 * time.Second,
 		}
 		var a_job Job
 		a_job.payload = payload
@@ -93,34 +94,34 @@ func MakeProxy() http.HandlerFunc {
 		log.Info("Proxy: params inside job payload: " + a_job.payload.Params)
 		job_queue.Add(a_job)
 
-		resp, err := client.Post(payload.Worker, "application/json",
-			bytes.NewBuffer(packet))
+		_, err := client.Post("http://127.0.0.1", "application/json",
+			bytes.NewBuffer([]byte("")))
 
-		if err != nil ||  marshal_err != nil {
+		if err != nil || marshal_err != nil {
 			// log.Fatal(err)
 			log.Info("HIT AN ERROR HERE ${err}")
 			return
 		}
-		resp_body, _ := ioutil.ReadAll(resp.Body)
-		log.Info(string(resp_body))
-
-
-		hostName, _ := os.Hostname()
-		d := &response{
-			Function:     name,
-			ResponseBody: string(resp_body) ,
-			HostName:     hostName,
-		}
+//		resp_body, _ := ioutil.ReadAll(resp.Body)
+//		log.Info(string(resp_body))
+//
+//
+//		hostName, _ := os.Hostname()
+//		d := &response{
+//			Function:     name,
+//			ResponseBody: string(resp_body) ,
+//			HostName:     hostName,
+//		}
 
 
 //		responseBody, res_err := json.Marshal(d)
-		_, res_err := json.Marshal(d)
-		if res_err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
-			log.Errorf("error invoking %s. %v", name, err)
-			return
-		}
+//		_, res_err := json.Marshal(d)
+//		if res_err != nil {
+//			w.WriteHeader(http.StatusInternalServerError)
+//			w.Write([]byte(err.Error()))
+//			log.Errorf("error invoking %s. %v", name, err)
+//			return
+//		}
 
 //		w.Write(responseBody)
 

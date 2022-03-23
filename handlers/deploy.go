@@ -10,6 +10,9 @@ import (
 	"strconv"
 	"github.com/foize/go.fifo"
 	typesv1 "github.com/openfaas/faas-provider/types"
+	"time"
+	"bytes"
+	"os"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -50,8 +53,40 @@ func scheduler() {
 		the_job := job.(Job)
 		log.Info("Unpackaging Job")
 		log.Info("JOB: " + the_job.payload.Params)
-		the_job.response_writer.Write([]byte("OK"))
+		payload := the_job.payload
 		log.Info("Jobs in queue: " + strconv.Itoa(job_queue.Len()))
+		 packet, marshal_err := json.Marshal(the_job.payload)
+		client := http.Client{
+                        Timeout: 5 * time.Second,
+                }
+                resp, err := client.Post(payload.Worker, "application/json",
+                        bytes.NewBuffer(packet))
+                if err != nil ||  marshal_err != nil {
+                        // log.Fatal(err)
+                        log.Info("HIT AN ERROR HERE ${err}")
+                        return
+                }
+                resp_body, _ := ioutil.ReadAll(resp.Body)
+                log.Info(string(resp_body))
+
+
+                hostName, _ := os.Hostname()
+                d := &response{
+                        Function:     payload.Fid,
+                        ResponseBody: string(resp_body) ,
+                        HostName:     hostName,
+                }
+
+
+             	responseBody, res_err := json.Marshal(d)
+                //_, res_err := json.Marshal(d)
+                if res_err != nil {
+                        the_job.response_writer.WriteHeader(http.StatusInternalServerError)
+                        the_job.response_writer.Write([]byte(err.Error()))
+                        log.Errorf("error invoking %s. %v", payload.Fid, err)
+                        return
+                }
+		the_job.response_writer.Write(responseBody)
 	}
 }
 
