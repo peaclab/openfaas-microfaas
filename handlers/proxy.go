@@ -12,6 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/btittelbach/go-bbhw"
 	"bytes"
+	
 	// "strconv"
 
 )
@@ -86,6 +87,9 @@ func MakeProxy() http.HandlerFunc {
 		client := http.Client{
 			Timeout: 5 * time.Second,
 		}
+
+		job_queue.Add(payload)
+
 		resp, err := client.Post(payload.Worker, "application/json",
 			bytes.NewBuffer(packet))
 

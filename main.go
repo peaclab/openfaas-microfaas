@@ -12,7 +12,10 @@ import (
 	"github.com/openfaas/faas-provider/logs"
 	bootTypes "github.com/openfaas/faas-provider/types"
 	log "github.com/sirupsen/logrus"
+	
 )
+
+
 
 func init() {
 	logFormat := os.Getenv("LOG_FORMAT")
@@ -34,6 +37,7 @@ func init() {
 	if level, err := log.ParseLevel(logLevel); err == nil {
 		log.SetLevel(level)
 	}
+	
 }
 
 func main() {
@@ -66,6 +70,9 @@ func main() {
 		EnableHealth:    true,
 		EnableBasicAuth: false,
 	}
+
+
+
 
 	log.Infof("listening on port %d ...", cfg.Port)
 	bootstrap.Serve(&bootstrapHandlers, &bootstrapConfig)

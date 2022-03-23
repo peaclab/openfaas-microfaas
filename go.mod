@@ -10,5 +10,6 @@ require (
 
 require (
 	github.com/btittelbach/go-bbhw v0.0.0-20181002125330-d30b01ebb2d4 // indirect
+	github.com/foize/go.fifo v0.0.0-20130327144150-3a04cfeec121 // indirect
 	golang.org/x/sys v0.0.0-20191026070338-33540a1f6037 // indirect
 )
