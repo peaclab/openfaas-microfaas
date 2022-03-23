@@ -87,8 +87,11 @@ func MakeProxy() http.HandlerFunc {
 		client := http.Client{
 			Timeout: 5 * time.Second,
 		}
-
-		job_queue.Add(payload)
+		var a_job Job
+		a_job.payload = payload
+		a_job.response_writer = w
+		log.Info("Proxy: params inside job payload: " + a_job.payload.Params)
+		job_queue.Add(a_job)
 
 		resp, err := client.Post(payload.Worker, "application/json",
 			bytes.NewBuffer(packet))
@@ -110,16 +113,16 @@ func MakeProxy() http.HandlerFunc {
 		}
 
 
-		responseBody, err := json.Marshal(d)
-
-		if err != nil {
+//		responseBody, res_err := json.Marshal(d)
+		_, res_err := json.Marshal(d)
+		if res_err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
 			log.Errorf("error invoking %s. %v", name, err)
 			return
 		}
 
-		w.Write(responseBody)
+//		w.Write(responseBody)
 
 		log.Info("!!!!!proxy request: %s completed.", name)
 	}
