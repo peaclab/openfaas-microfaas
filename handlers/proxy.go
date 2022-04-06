@@ -64,12 +64,20 @@ type Worker struct {
 	id     int
 	ip     string
 	status Status
+	// last_ready time.Time
 }
 //List of workers
 var allWorkers = []Worker{
 	Worker{0, "192.168.1.20", READY},
 	Worker{1, "192.168.1.21", READY},
 	Worker{2, "192.168.1.22", READY},
+	// Worker{3, "192.168.1.23", READY, time.Now()},
+	// Worker{4, "192.168.1.24", READY, time.Now()},
+	// Worker{5, "192.168.1.25", READY, time.Now()},
+	// Worker{6, "192.168.1.26", READY, time.Now()},
+	// Worker{7, "192.168.1.27", READY, time.Now()},
+	// Worker{8, "192.168.1.28", READY, time.Now()},
+	// Worker{9, "192.168.1.29", READY, time.Now()},
 }
 
 func find_worker() string {
@@ -78,12 +86,31 @@ func find_worker() string {
 			if(allWorkers[i].status == READY){
 				log.Info("Chose worker: " + strconv.Itoa(allWorkers[i].id))
 				allWorkers[i].status = RUNNING
-				log.Info(allWorkers[0].status, allWorkers[1].status, allWorkers[2].status)
+				log.Info(allWorkers[0].status, allWorkers[1].status, allWorkers[2].status, allWorkers[3].status, allWorkers[4].status, allWorkers[5].status, allWorkers[6].status, allWorkers[7].status, allWorkers[8].status, allWorkers[9].status)
 				return allWorkers[i].ip
 			}
 		}
   	}
 }
+// func shutdown() {
+// 	for {
+// 		for i := range allWorkers {
+// 			if(allWorkers[i].status == READY && time.Since(allWorkers[i].last_ready) > 15 * time.Second){
+// 				log.Info("worker " + strconv.Itoa(i) + " is shutting down")
+// 				// resp, err := client.Post(url, "application/json",
+// 				// 	bytes.NewBuffer(packet))
+
+// 				// if err != nil ||  marshal_err != nil {
+// 				// 	// log.Fatal(err)
+// 				// 	log.Info("HIT AN ERROR HERE: ", err)
+// 				// 	return
+// 				// }
+// 				// resp_body, _ := ioutil.ReadAll(resp.Body)
+// 				// log.Info(string(resp_body))
+// 			}
+// 		}
+//   	}
+// }
 
 // MakeProxy creates a proxy for HTTP web requests which can be routed to a function.
 func MakeProxy() http.HandlerFunc {
