@@ -64,13 +64,15 @@ type Worker struct {
 	id     int
 	ip     string
 	status Status
-	// last_ready time.Time
+	pwr_pin uint
 }
+
+
 //List of workers
 var allWorkers = []Worker{
-	Worker{0, "192.168.1.20", READY},
-	Worker{1, "192.168.1.21", READY},
-	Worker{2, "192.168.1.22", READY},
+	Worker{0, "192.168.1.20", READY, 67},
+	Worker{1, "192.168.1.21", READY, 48},
+	Worker{2, "192.168.1.22", READY, 68},
 	// Worker{3, "192.168.1.23", READY, time.Now()},
 	// Worker{4, "192.168.1.24", READY, time.Now()},
 	// Worker{5, "192.168.1.25", READY, time.Now()},
@@ -82,13 +84,21 @@ var allWorkers = []Worker{
 
 func find_worker() string {
 	for {
+		var off_worker int = -1
 		for i := range allWorkers {
+			if(allWorkers[i].status == POWEROFF){
+				off_worker = i
+			}
 			if(allWorkers[i].status == READY){
 				log.Info("Chose worker: " + strconv.Itoa(allWorkers[i].id))
 				allWorkers[i].status = RUNNING
-				log.Info(allWorkers[0].status, allWorkers[1].status, allWorkers[2].status, allWorkers[3].status, allWorkers[4].status, allWorkers[5].status, allWorkers[6].status, allWorkers[7].status, allWorkers[8].status, allWorkers[9].status)
+				log.Info(allWorkers[0].status, allWorkers[1].status, allWorkers[2].status)
 				return allWorkers[i].ip
 			}
+		}
+		if (off_worker != -1){
+			// Power on
+			gpio_turn_on(allWorkers[off_worker].pwr_pin)
 		}
   	}
 }
@@ -128,14 +138,6 @@ func MakeProxy() http.HandlerFunc {
 			return
 		}
 
-		// Working GPIO pins
-		worker_list := map[int]uint{
-			1: 48, // works
-			2: 67, // works
-			3: 68, // works
-		}
-
-		gpio_turn_on(worker_list[3])
 
 		v.InvocationCount = v.InvocationCount + 1
 

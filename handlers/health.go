@@ -42,6 +42,7 @@ func MakeHealthHandler() http.HandlerFunc {
 					log.Info(allWorkers[i].ip+" is READY")
 					log.Info(allWorkers[0].status, allWorkers[1].status, allWorkers[2].status)
 
+
 				}
 			}
 		}
