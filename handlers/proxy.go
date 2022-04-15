@@ -68,18 +68,20 @@ type Worker struct {
 }
 
 
-//List of workers
+//List of workers 67, 48, 68, 66, 61, 31, 60, 30, 5, 3, 2
+// bad 69,44, 26, 46, 47
+//eh working 35,36, 37, 33, 32, 
 var allWorkers = []Worker{
-	Worker{0, "192.168.1.20", READY, 67},
-	Worker{1, "192.168.1.21", READY, 48},
-	Worker{2, "192.168.1.22", READY, 68},
-	// Worker{3, "192.168.1.23", READY, time.Now()},
-	// Worker{4, "192.168.1.24", READY, time.Now()},
-	// Worker{5, "192.168.1.25", READY, time.Now()},
-	// Worker{6, "192.168.1.26", READY, time.Now()},
-	// Worker{7, "192.168.1.27", READY, time.Now()},
-	// Worker{8, "192.168.1.28", READY, time.Now()},
-	// Worker{9, "192.168.1.29", READY, time.Now()},
+	Worker{0, "192.168.1.20", POWEROFF, 2},
+	Worker{1, "192.168.1.21", POWEROFF, 3},
+	Worker{2, "192.168.1.22", POWEROFF, 5},
+	Worker{3, "192.168.1.23", POWEROFF, 30},
+	Worker{4, "192.168.1.24", POWEROFF, 48},
+	Worker{5, "192.168.1.25", POWEROFF, 60},
+	Worker{6, "192.168.1.26", POWEROFF, 61},
+	Worker{7, "192.168.1.27", POWEROFF, 66},
+	Worker{8, "192.168.1.28", POWEROFF, 67},
+	Worker{9, "192.168.1.29", POWEROFF, 68},
 }
 
 func find_worker() string {
@@ -97,6 +99,7 @@ func find_worker() string {
 			}
 		}
 		if (off_worker != -1){
+			log.Info("Turning on worker number " + strconv.Itoa(off_worker))
 			// Power on
 			gpio_turn_on(allWorkers[off_worker].pwr_pin)
 		}
@@ -153,20 +156,36 @@ func MakeProxy() http.HandlerFunc {
 		payload.Worker = func_call.Worker
 		payload.Lang = func_call.Lang
 		packet, marshal_err := json.Marshal(payload)
-		client := http.Client{
-			Timeout: 30 * time.Second,
+		tr := &http.Transport{
+			MaxIdleConns:       10,
+			IdleConnTimeout:    30 * time.Second,
+			DisableCompression: true,
+			DisableKeepAlives: true,
 		}
+		client := http.Client{Transport: tr}
+		// client := http.Client{
+		// 	Timeout: 30 * time.Second,
+		// }
 		
 		url := "http://" + find_worker() + ":8080/run"
+	
 		resp, err := client.Post(url, "application/json",
 			bytes.NewBuffer(packet))
-
 		if err != nil ||  marshal_err != nil {
 			// log.Fatal(err)
 			log.Info("HIT AN ERROR HERE: ", err)
 			return
 		}
-		resp_body, _ := ioutil.ReadAll(resp.Body)
+		// log.Info("HIT HERE---------------- ", resp.Body)
+		
+		resp_body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			// log.Fatal(err)
+			log.Info("HIT A READ ALL ERROR HERE: ", err)
+		}
+		// log.Info("HIT HERE 2---------------- ", resp.Body)
+		resp.Body.Close()
+		client.CloseIdleConnections()
 		log.Info(string(resp_body))
 
 
