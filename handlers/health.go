@@ -29,7 +29,8 @@ func MakeHealthHandler() http.HandlerFunc {
 				if (allWorkers[i].ip == userIP.String()){
 					allWorkers[i].status = POWEROFF
 					log.Info(allWorkers[i].ip+" is POWEROFF")
-					log.Info(allWorkers[0].status, allWorkers[1].status, allWorkers[2].status)
+					log.Info(allWorkers[0].status, allWorkers[1].status, allWorkers[2].status, allWorkers[3].status, allWorkers[4].status, allWorkers[5].status, allWorkers[6].status, allWorkers[7].status, allWorkers[8].status, allWorkers[9].status)
+
 
 				}
 			}
@@ -40,7 +41,8 @@ func MakeHealthHandler() http.HandlerFunc {
 				if (allWorkers[i].ip == userIP.String()){
 					allWorkers[i].status = READY
 					log.Info(allWorkers[i].ip+" is READY")
-					log.Info(allWorkers[0].status, allWorkers[1].status, allWorkers[2].status)
+					log.Info(allWorkers[0].status, allWorkers[1].status, allWorkers[2].status, allWorkers[3].status, allWorkers[4].status, allWorkers[5].status, allWorkers[6].status, allWorkers[7].status, allWorkers[8].status, allWorkers[9].status)
+
 
 
 				}

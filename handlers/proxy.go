@@ -94,7 +94,7 @@ func find_worker() string {
 			if(allWorkers[i].status == READY){
 				log.Info("Chose worker: " + strconv.Itoa(allWorkers[i].id))
 				allWorkers[i].status = RUNNING
-				log.Info(allWorkers[0].status, allWorkers[1].status, allWorkers[2].status)
+				log.Info(allWorkers[0].status, allWorkers[1].status, allWorkers[2].status, allWorkers[3].status, allWorkers[4].status, allWorkers[5].status, allWorkers[6].status, allWorkers[7].status, allWorkers[8].status, allWorkers[9].status)
 				return allWorkers[i].ip
 			}
 		}
