@@ -39,3 +39,7 @@ Function                      	Invocations    	Replicas
 figlet                        	0              	1
 ```
 
+## Orchestrator Setup
+1. Connect the orchestrator to your computer via serial communication.
+2. After compiling **main.go**, then transfer file via serial using the **rz** command.
+
